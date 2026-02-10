@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -11,16 +13,31 @@ from src.exceptions import (
 )
 from src.logger import setup_logging, get_logger
 from src.middleware.request_logger import RequestLoggingMiddleware
+from src.proxy import proxy_client
 
 logger = get_logger(__name__)
 
 setup_logging()
+
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    """Управление жизненным циклом приложения."""
+    # Startup
+    await proxy_client.start()
+    logger.info("application_startup_complete")
+    yield
+    # Shutdown
+    await proxy_client.stop()
+    logger.info("application_shutdown_complete")
+
 
 app = FastAPI(
     title="API Gateway",
     description="Единая точка входа для микросервисного интернет-магазина",
     version="0.1.0",
     debug=settings.DEBUG,
+    lifespan=lifespan,
 )
 
 app.add_middleware(
