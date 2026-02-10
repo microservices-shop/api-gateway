@@ -1,0 +1,22 @@
+[project]
+name = "api-gateway"
+version = "0.1.0"
+description = "API Gateway: routing and authentication"
+requires-python = ">=3.12"
+
+[tool.ruff]
+line-length = 88
+exclude = [
+  ".git",
+  ".venv",
+  "build",
+  "dist",
+  "tests/data",
+  "notes",
+  "__pycache__"
+]
+
+[tool.ruff.isort]
+known-first-party = ["src"]
+
+
