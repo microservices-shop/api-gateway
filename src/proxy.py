@@ -26,7 +26,7 @@ class ProxyClient:
         )
         limits = httpx.Limits(max_connections=100, max_keepalive_connections=20)
 
-        self.client = httpx.AsyncClient(timeout=timeout, limits=limits)
+        self.client = httpx.AsyncClient(timeout=timeout, limits=limits, trust_env=False)
         logger.info(
             "proxy_client_initialized",
             timeout_connect=settings.PROXY_TIMEOUT_CONNECT,
@@ -118,12 +118,19 @@ class ProxyClient:
                     method=request.method,
                     status_code=response.status_code,
                     attempt=attempt + 1,
+                    upstream_headers=dict(response.headers),
                 )
 
                 # Фильтрация заголовков ответа
                 response_headers = dict(response.headers)
-                response_headers.pop("content-encoding", None)
-                response_headers.pop("transfer-encoding", None)
+                for header in (
+                    "content-encoding",
+                    "transfer-encoding",
+                    "content-length",
+                    "date",
+                    "server",
+                ):
+                    response_headers.pop(header, None)
 
                 return Response(
                     content=response.content,

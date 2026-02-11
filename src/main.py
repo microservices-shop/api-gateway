@@ -14,6 +14,7 @@ from src.exceptions import (
 from src.logger import setup_logging, get_logger
 from src.middleware.request_logger import RequestLoggingMiddleware
 from src.proxy import proxy_client
+from src.routes.products import router as products_router
 
 logger = get_logger(__name__)
 
@@ -50,13 +51,7 @@ app.add_middleware(
 
 app.add_middleware(RequestLoggingMiddleware)
 
-
-# app.include_router(auth_router)
-# app.include_router(users_router)
-# app.include_router(products_router)
-# app.include_router(categories_router)
-# app.include_router(cart_router)
-# app.include_router(orders_router)
+app.include_router(products_router)
 
 
 @app.get("/health")
