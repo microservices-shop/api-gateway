@@ -17,6 +17,7 @@ from src.proxy import proxy_client
 from src.routes.products import router as products_router
 from src.routes.categories import router as categories_router
 from src.routes.auth import router as auth_router
+from src.routes.users import router as users_router
 
 logger = get_logger(__name__)
 
@@ -56,6 +57,7 @@ app.add_middleware(RequestLoggingMiddleware)
 app.include_router(products_router)
 app.include_router(categories_router)
 app.include_router(auth_router)
+app.include_router(users_router)
 
 
 @app.get("/health")
