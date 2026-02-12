@@ -3,7 +3,7 @@ from fastapi import APIRouter, Request
 from src.config import settings
 from src.dependencies import CurrentUserDep
 from src.proxy import proxy_client
-from src.schemas import UserResponseSchema, UserUpdateSchema
+from src.schemas.users import UserResponseSchema, UserUpdateSchema
 
 router = APIRouter(prefix="/api/users", tags=["Users"])
 

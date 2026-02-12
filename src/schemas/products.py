@@ -1,28 +1,7 @@
 from datetime import datetime
-from uuid import UUID
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field, EmailStr
-
-
-class TokenPayloadSchema(BaseModel):
-    """Схема payload JWT токена."""
-
-    sub: UUID = Field(..., description="User ID (subject)")
-    email: EmailStr = Field(..., description="User email")
-    role: str = Field(..., description="User role (user/admin)")
-    type: str = Field(..., description="Token type (access/refresh)")
-    iat: datetime = Field(..., description="Issued at")
-    exp: datetime = Field(..., description="Expiration time")
-
-    model_config = ConfigDict(from_attributes=True)
-
-    def to_headers(self) -> dict[str, str]:
-        return {
-            "X-User-ID": str(self.sub),
-            "X-User-Email": self.email,
-            "X-User-Role": self.role,
-        }
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class ProductCreateSchema(BaseModel):
@@ -99,58 +78,3 @@ class ProductListResponse(BaseModel):
     page: int = Field(..., description="Текущая страница")
     page_size: int = Field(..., description="Размер страницы")
     total_pages: int = Field(..., description="Всего страниц")
-
-
-class CategoryCreateSchema(BaseModel):
-    """Схема для создания категории (для документации Swagger)."""
-
-    title: str = Field(
-        ..., max_length=100, description="Название категории", example="Смартфоны"
-    )
-
-
-class CategoryUpdateSchema(BaseModel):
-    """Схема для обновления категории (для документации Swagger)."""
-
-    title: str | None = Field(None, max_length=100, description="Название категории")
-
-
-class CategoryResponseSchema(BaseModel):
-    """Схема для ответа с данными категории."""
-
-    model_config = ConfigDict(from_attributes=True)
-
-    id: int = Field(..., description="ID категории", example=1)
-    title: str = Field(..., description="Название категории", example="Смартфоны")
-
-
-class UserResponseSchema(BaseModel):
-    """Схема ответа с данными пользователя."""
-
-    model_config = ConfigDict(from_attributes=True)
-
-    id: UUID = Field(..., description="Уникальный идентификатор пользователя")
-    email: EmailStr = Field(..., description="Адрес электронной почты пользователя")
-    name: str = Field(..., description="Отображаемое имя пользователя")
-    picture_url: str | None = Field(
-        None, description="URL фотографии профиля пользователя"
-    )
-    role: str = Field(..., description="Роль пользователя (user, admin)")
-    is_active: bool = Field(..., description="Активен ли аккаунт пользователя")
-    created_at: datetime = Field(...)
-
-
-class UserUpdateSchema(BaseModel):
-    """Схема для обновления профиля пользователя."""
-
-    name: str | None = Field(
-        None,
-        min_length=1,
-        max_length=255,
-        description="Новое отображаемое имя",
-        examples=["Александр"],
-    )
-    picture_url: str | None = Field(
-        None,
-        description="Новый URL аватара пользователя",
-    )

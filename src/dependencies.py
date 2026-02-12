@@ -7,7 +7,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from src.config import settings
 from src.exceptions import AuthenticationError
-from src.schemas import TokenPayloadSchema
+from src.schemas.auth import TokenPayloadSchema
 
 ACCESS_TOKEN_TYPE = "access"
 

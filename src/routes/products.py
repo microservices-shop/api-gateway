@@ -3,7 +3,7 @@ from fastapi import APIRouter, Request
 from src.config import settings
 from src.dependencies import AdminUserDep
 from src.proxy import proxy_client
-from src.schemas import (
+from src.schemas.products import (
     ProductCreateSchema,
     ProductUpdateSchema,
     ProductListResponse,
