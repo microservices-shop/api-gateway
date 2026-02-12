@@ -18,6 +18,7 @@ from src.routes.products import router as products_router
 from src.routes.categories import router as categories_router
 from src.routes.auth import router as auth_router
 from src.routes.users import router as users_router
+from src.services.health import HealthServiceDep
 
 logger = get_logger(__name__)
 
@@ -61,8 +62,14 @@ app.include_router(users_router)
 
 
 @app.get("/health")
-async def health_check():
-    return {"status": "healthy", "service": "api-gateway"}
+async def health_check(service: HealthServiceDep):
+    services_health = await service.check_all_services()
+    all_healthy = all(s.healthy for s in services_health)
+    return {
+        "gateway": "healthy",
+        "services": services_health,
+        "all_services_healthy": all_healthy,
+    }
 
 
 # --- Exception Handlers ---

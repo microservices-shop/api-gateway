@@ -31,5 +31,7 @@ class Settings(BaseSettings):
     PROXY_TIMEOUT_WRITE: float = 10.0
     PROXY_MAX_RETRIES: int = 3
 
+    HEALTH_CHECK_TIMEOUT: float = 3.0
+
 
 settings = Settings()
