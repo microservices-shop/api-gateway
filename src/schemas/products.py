@@ -3,6 +3,8 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from src.schemas.categories import CategoryResponseSchema
+
 
 class ProductCreateSchema(BaseModel):
     """Схема для создания продукта (для документации Swagger)."""
@@ -68,6 +70,12 @@ class ProductResponseSchema(BaseModel):
     attributes: dict[str, Any] = Field(..., description="Динамические атрибуты товара")
     created_at: datetime = Field(..., description="Дата и время создания")
     updated_at: datetime = Field(..., description="Дата и время последнего обновления")
+
+
+class ProductDetailResponseSchema(ProductResponseSchema):
+    """Схема детальной информации о товаре (включает категорию)."""
+
+    category: CategoryResponseSchema = Field(..., description="Категория товара")
 
 
 class ProductListResponse(BaseModel):

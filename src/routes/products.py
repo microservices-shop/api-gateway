@@ -8,6 +8,7 @@ from src.schemas.products import (
     ProductUpdateSchema,
     ProductListResponse,
     ProductResponseSchema,
+    ProductDetailResponseSchema,
 )
 
 router = APIRouter(prefix="/api/products", tags=["Products"])
@@ -29,7 +30,9 @@ async def get_products_list(request: Request) -> ProductListResponse:
 
 
 @router.get("/{product_id}")
-async def get_product_by_id(product_id: int, request: Request) -> ProductResponseSchema:
+async def get_product_by_id(
+    product_id: int, request: Request
+) -> ProductDetailResponseSchema:
     """
     Получить конкретный товар по ID (публичный эндпоинт).
 
