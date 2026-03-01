@@ -1,3 +1,5 @@
+import uuid
+
 from fastapi import APIRouter, Request, status
 
 from src.config import settings
@@ -56,7 +58,7 @@ async def add_cart_item(
 
 @router.patch("/items/{item_id}", response_model=CartItemResponseSchema)
 async def update_cart_item(
-    item_id: int,
+    item_id: uuid.UUID,
     request: Request,
     user: CurrentUserDep,
     body: UpdateQuantitySchema,
@@ -77,7 +79,7 @@ async def update_cart_item(
 
 @router.delete("/items/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_cart_item(
-    item_id: int,
+    item_id: uuid.UUID,
     request: Request,
     user: CurrentUserDep,
 ):

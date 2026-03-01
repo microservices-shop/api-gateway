@@ -1,0 +1,58 @@
+from enum import StrEnum
+
+from pydantic import BaseModel, ConfigDict, Field
+
+
+class AttributeType(StrEnum):
+    STRING = "string"
+    INTEGER = "integer"
+    FLOAT = "float"
+    BOOLEAN = "boolean"
+
+
+class AttributeCreateSchema(BaseModel):
+    """Схема для создания атрибута (для документации Swagger)."""
+
+    category_id: int = Field(..., gt=0, description="ID категории продукта", example=2)
+    title: str = Field(
+        ..., max_length=50, description="Название атрибута", example="Цвет"
+    )
+    type: AttributeType = Field(
+        ..., description="Тип атрибута", example=AttributeType.STRING
+    )
+    required: bool = Field(
+        default=False, description="Обязателен ли атрибут", example=False
+    )
+
+
+class AttributeUpdateSchema(BaseModel):
+    """Схема для обновления атрибута (для документации Swagger)."""
+
+    category_id: int | None = Field(
+        None, gt=0, description="ID категории продукта", example=2
+    )
+    title: str | None = Field(
+        None, max_length=50, description="Название атрибута", example="Цвет"
+    )
+    type: AttributeType | None = Field(
+        None, description="Тип атрибута", example=AttributeType.STRING
+    )
+    required: bool | None = Field(
+        None, description="Обязателен ли атрибут", example=False
+    )
+
+
+class AttributeResponseSchema(BaseModel):
+    """Схема ответа с данными атрибута."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int = Field(..., description="ID атрибута", example=1)
+    category_id: int = Field(..., description="ID категории", example=2)
+    title: str = Field(
+        ..., max_length=50, description="Название атрибута", example="Цвет"
+    )
+    type: AttributeType = Field(
+        ..., description="Тип атрибута", example=AttributeType.STRING
+    )
+    required: bool = Field(..., description="Обязательность атрибута", example=False)
