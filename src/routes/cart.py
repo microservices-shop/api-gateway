@@ -10,6 +10,8 @@ from src.schemas.cart import (
     UpdateQuantitySchema,
     CartItemResponseSchema,
     CartResponseSchema,
+    ItemSelectionSchema,
+    SelectAllSchema,
 )
 
 router = APIRouter(prefix="/api/cart", tags=["Cart"])
@@ -111,6 +113,47 @@ async def clear_cart(
         request=request,
         target_base_url=settings.CART_SERVICE_URL,
         path="api/v1/cart",
+        service_name="cart-service",
+        extra_headers=user.to_headers(),
+    )
+
+
+@router.patch("/items/{item_id}/select", response_model=CartItemResponseSchema)
+async def change_item_selection(
+    item_id: uuid.UUID,
+    request: Request,
+    user: CurrentUserDep,
+    body: ItemSelectionSchema,
+) -> CartItemResponseSchema:
+    """
+    Переключить статус выбора товара в корзине.
+
+    Маппинг: PATCH /api/cart/items/{item_id}/select → Cart Service: PATCH /api/v1/cart/items/{item_id}/select
+    """
+    return await proxy_client.forward(
+        request=request,
+        target_base_url=settings.CART_SERVICE_URL,
+        path=f"api/v1/cart/items/{item_id}/select",
+        service_name="cart-service",
+        extra_headers=user.to_headers(),
+    )
+
+
+@router.patch("/select-all", response_model=CartResponseSchema)
+async def select_all(
+    request: Request,
+    user: CurrentUserDep,
+    body: SelectAllSchema,
+) -> CartResponseSchema:
+    """
+    Выбрать или снять выбор со всех доступных товаров в корзине.
+
+    Маппинг: PATCH /api/cart/select-all → Cart Service: PATCH /api/v1/cart/select-all
+    """
+    return await proxy_client.forward(
+        request=request,
+        target_base_url=settings.CART_SERVICE_URL,
+        path="api/v1/cart/select-all",
         service_name="cart-service",
         extra_headers=user.to_headers(),
     )

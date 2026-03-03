@@ -14,6 +14,20 @@ class UpdateQuantitySchema(BaseModel):
     quantity: int = Field(..., description="Новое количество товара", ge=1)
 
 
+class ItemSelectionSchema(BaseModel):
+    """Тело запроса для переключения выбора одного товара."""
+
+    is_selected: bool = Field(..., description="Новый статус выбора товара")
+
+
+class SelectAllSchema(BaseModel):
+    """Тело запроса для массового выбора / снятия выбора всех товаров."""
+
+    is_selected: bool = Field(
+        ..., description="True — выбрать все доступные, False — снять выбор со всех"
+    )
+
+
 class CartItemResponseSchema(BaseModel):
     """Ответ с данными одного элемента корзины."""
 
@@ -36,6 +50,9 @@ class CartItemResponseSchema(BaseModel):
     )
     out_of_stock: bool = Field(..., description="True если товар закончился на складе")
     product_deleted: bool = Field(..., description="True если товар удалён из каталога")
+    is_selected: bool = Field(
+        ..., description="True если товар выбран для оформления заказа"
+    )
 
     created_at: datetime = Field(..., description="Дата добавления в корзину")
     updated_at: datetime = Field(..., description="Дата последнего изменения")
