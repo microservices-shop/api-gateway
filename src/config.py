@@ -33,5 +33,8 @@ class Settings(BaseSettings):
 
     HEALTH_CHECK_TIMEOUT: float = 3.0
 
+    DEFAULT_PAGE_SIZE: int = 20
+    MAX_PAGE_SIZE: int = 100
+
 
 settings = Settings()

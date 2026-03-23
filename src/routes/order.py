@@ -1,5 +1,5 @@
 import uuid
-from fastapi import APIRouter, Request, status
+from fastapi import APIRouter, Request, status, Query
 
 from src.dependencies import CurrentUserDep
 from src.proxy import proxy_client
@@ -8,8 +8,8 @@ from src.config import settings
 from src.schemas.order import (
     CheckoutResponseSchema,
     PayResponseSchema,
-    OrderListResponseSchema,
     OrderDetailResponseSchema,
+    PaginatedOrdersResponseSchema,
 )
 
 router = APIRouter(prefix="/orders")
@@ -75,7 +75,7 @@ async def pay(
 
 @router.get(
     "",
-    response_model=list[OrderListResponseSchema],
+    response_model=PaginatedOrdersResponseSchema,
     status_code=status.HTTP_200_OK,
     summary="Список заказов",
     description="Возвращает завершённые заказы пользователя, отсортированные от новых к старым.",
@@ -83,7 +83,14 @@ async def pay(
 async def get_orders(
     request: Request,
     user: CurrentUserDep,
-) -> list[OrderListResponseSchema]:
+    page: int = Query(default=1, ge=1, description="Номер страницы"),
+    page_size: int = Query(
+        default=settings.DEFAULT_PAGE_SIZE,
+        ge=1,
+        le=settings.MAX_PAGE_SIZE,
+        description="Количество товаров на странице",
+    ),
+) -> PaginatedOrdersResponseSchema:
     """Список завершённых заказов для страницы «Мои заказы».
 
     Если заказов нет - возвращает пустой список.
