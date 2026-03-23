@@ -17,7 +17,7 @@ from src.schemas.cart import (
 router = APIRouter(prefix="/api/cart", tags=["Cart"])
 
 
-@router.get("", response_model=CartResponseSchema)
+@router.get("", response_model=CartResponseSchema, status_code=status.HTTP_200_OK)
 async def get_cart(
     request: Request,
     user: CurrentUserDep,
@@ -58,7 +58,11 @@ async def add_cart_item(
     )
 
 
-@router.patch("/items/{item_id}", response_model=CartItemResponseSchema)
+@router.patch(
+    "/items/{item_id}",
+    response_model=CartItemResponseSchema,
+    status_code=status.HTTP_200_OK,
+)
 async def update_cart_item(
     item_id: uuid.UUID,
     request: Request,
@@ -118,7 +122,11 @@ async def clear_cart(
     )
 
 
-@router.patch("/items/{item_id}/select", response_model=CartItemResponseSchema)
+@router.patch(
+    "/items/{item_id}/select",
+    response_model=CartItemResponseSchema,
+    status_code=status.HTTP_200_OK,
+)
 async def change_item_selection(
     item_id: uuid.UUID,
     request: Request,
@@ -139,7 +147,9 @@ async def change_item_selection(
     )
 
 
-@router.patch("/select-all", response_model=CartResponseSchema)
+@router.patch(
+    "/select-all", response_model=CartResponseSchema, status_code=status.HTTP_200_OK
+)
 async def select_all(
     request: Request,
     user: CurrentUserDep,

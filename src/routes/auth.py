@@ -2,6 +2,7 @@ from fastapi import APIRouter, Request, status
 
 from src.config import settings
 from src.proxy import proxy_client
+from src.dependencies import CurrentUserDep
 
 router = APIRouter(prefix="/api/auth", tags=["Auth"])
 
@@ -59,4 +60,19 @@ async def logout(request: Request):
         target_base_url=settings.AUTH_SERVICE_URL,
         path="api/v1/auth/logout",
         service_name="auth-service",
+    )
+
+
+@router.post("/logout-all", status_code=status.HTTP_204_NO_CONTENT)
+async def logout_all(request: Request, user: CurrentUserDep):
+    """
+    Выход со всех устройств (удаление всех refresh токенов пользователя).
+    Проксирует запрос в Auth Service: POST /api/v1/auth/logout-all
+    """
+    return await proxy_client.forward(
+        request=request,
+        target_base_url=settings.AUTH_SERVICE_URL,
+        path="api/v1/auth/logout-all",
+        service_name="auth-service",
+        extra_headers=user.to_headers(),
     )
