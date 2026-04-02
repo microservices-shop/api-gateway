@@ -92,6 +92,9 @@ class CheckoutResponseSchema(BaseModel):
     order_id: uuid.UUID = Field(description="ID созданного заказа")
     status: str = Field(description="Статус заказа", examples=["awaiting_payment"])
     total_price: int = Field(description="Сумма заказа в копейках", examples=[250000])
+    items: list[OrderItemResponseSchema] = Field(
+        default_factory=list, description="Товары в заказе (снапшоты)"
+    )
 
 
 class PayResponseSchema(BaseModel):

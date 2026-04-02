@@ -20,6 +20,7 @@ from src.routes.auth import router as auth_router
 from src.routes.users import router as users_router
 from src.routes.attributes import router as attributes_router
 from src.routes.cart import router as cart_router
+from src.routes.order import router as order_router
 from src.services.health import HealthServiceDep
 
 logger = get_logger(__name__)
@@ -63,6 +64,7 @@ app.include_router(auth_router)
 app.include_router(users_router)
 app.include_router(cart_router)
 app.include_router(attributes_router)
+app.include_router(order_router, prefix="/api/v1")
 
 
 @app.get("/health")
