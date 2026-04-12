@@ -111,7 +111,6 @@ class ProxyClient:
                     content=body,
                 )
 
-                # Успешный ответ — логируем и возвращаем
                 logger.info(
                     "proxy_request_success",
                     service=service_name,
@@ -122,24 +121,27 @@ class ProxyClient:
                 )
 
                 # Фильтрация заголовков ответа
-                response_headers = dict(response.headers)
-                for header in (
+                fastapi_response = Response(
+                    content=response.content,
+                    status_code=response.status_code,
+                )
+
+                exclude_headers = {
                     "content-encoding",
                     "transfer-encoding",
                     "content-length",
                     "date",
                     "server",
-                ):
-                    response_headers.pop(header, None)
+                }
 
-                return Response(
-                    content=response.content,
-                    status_code=response.status_code,
-                    headers=response_headers,
-                )
+                for key, value in response.headers.multi_items():
+                    if key.lower() not in exclude_headers:
+                        fastapi_response.headers.append(key, value)
+
+                return fastapi_response
 
             except httpx.ConnectError as exc:
-                # Ошибка подключения — retry с exponential backoff
+                # Ошибка подключения - retry с exponential backoff
                 last_error = exc
                 backoff_time = 0.5 * (attempt + 1)
 
@@ -159,7 +161,7 @@ class ProxyClient:
                 continue
 
             except httpx.TimeoutException as exc:
-                # Таймаут — не retryable
+                # Таймаут - не retryable
                 logger.error(
                     "proxy_timeout",
                     service=service_name,
@@ -172,7 +174,7 @@ class ProxyClient:
                 ) from exc
 
             except httpx.HTTPError as exc:
-                # Другие HTTP ошибки — не retryable
+                # Другие HTTP ошибки - не retryable
                 logger.error(
                     "proxy_http_error",
                     service=service_name,
